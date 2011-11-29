@@ -1,0 +1,132 @@
+import socket
+
+import msgpack
+from tornado import netutil
+from tornado.iostream import IOStream
+
+import msgpackrpc.message
+from msgpackrpc import error
+
+
+def build_transport(session, reconnect_limit=5):
+    return ClientTransport(session, session.address, reconnect_limit)
+
+
+class BaseSocket(object):
+    def __init__(self, stream):
+        self._stream = stream
+        self._packer = msgpack.Packer()
+        self._unpacker = msgpack.Unpacker()
+
+    def close(self):
+        self._stream.close()
+
+    def send_message(self, message):
+        self._stream.write(self._packer.pack(message))
+
+    def on_read(self, data):
+        self._unpacker.feed(data)
+        for message in self._unpacker:
+            self.on_message(message)
+
+    def on_message(self, message, *args):
+        if len(message) != 4:
+            raise Exception("Invalid MessagePack-RPC protocol: message = {0}".format(message))
+
+        msgtype = message[0]
+        if msgtype == msgpackrpc.message.REQUEST:
+            self.on_request(message[1], message[2], message[3])
+        elif msgtype == msgpackrpc.message.RESPONSE:
+            self.on_response(message[1], message[2], message[3])
+        elif msgtype == msgpackrpc.message.NOTIFY:
+            self.on_notify(message[1], message[2])
+        else:
+            raise RPCError("Unknown message type: type = {0}".format(msgtype))
+
+    def on_request(self, msgid, method, param):
+        raise NotImplementedError("on_request not implemented");
+
+    def on_response(self, msgid, error, result):
+        raise NotImplementedError("on_response not implemented");
+
+    def on_notify(self, method, param):
+        raise NotImplementedError("on_notify not implemented");
+
+
+class ClientSocket(BaseSocket):
+    def __init__(self, stream, transport):
+        BaseSocket.__init__(self, stream)
+        self._transport = transport
+        self._stream.set_close_callback(self.on_close)
+
+    def connect(self):
+        self._stream.connect(self._transport._address.unpack(), self.on_connect)
+
+    def on_connect(self):
+        self._stream.read_until_close(self.on_read, self.on_read)
+        self._transport.on_connect(self)
+
+    def on_connect_failed(self):
+        self._transport.on_connect_failed(self)
+
+    def on_close(self):
+        self._transport.on_close(self)
+
+    def on_response(self, msgid, error, result):
+        self._transport._session.on_response(msgid, error, result)
+
+
+class ClientTransport(object):
+    def __init__(self, session, address, reconnect_limit):
+        self._session = session
+        self._address = address
+        self._reconnect_limit = reconnect_limit;
+
+        self._connecting = 0
+        self._pending = []
+        self._sockets = []
+
+    def send_message(self, message):
+        if len(self._sockets) == 0:
+            if self._connecting == 0:
+                self.connect()
+                self._connecting = 1
+            self._pending.append(message)
+        else:
+            sock = self._sockets[0]
+            sock.send_message(message)
+
+    def connect(self):
+        stream = IOStream(self._address.socket(), io_loop=self._session._loop._ioloop)
+        socket = ClientSocket(stream, self)
+        socket.connect();
+
+    def close(self):
+        for sock in self._sockets:
+            sock.close()
+
+        self._connecting = 0
+        self._pending = []
+        self._sockets = []
+
+    def on_connect(self, sock):
+        self._sockets.append(sock)
+        for pending in self._pending:
+            sock.send_message(pending)
+        self._pending = []
+
+    def on_connect_failed(self, sock):
+        if self._connecting < self._reconnect_limit:
+            self.connect()
+            self._connecting += 1
+        else:
+            self._connecting = 0
+            self._pending = []
+            self._session.on_connect_failed("Retry connection over the limit")
+
+    def on_close(self, sock):
+        if sock in self._sockets:
+            self._sockets.remove(sock)
+        else:
+            # Tornado does not have on_connect_failed event.
+            self.on_connect_failed(sock)
