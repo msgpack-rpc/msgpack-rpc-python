@@ -6,7 +6,8 @@ class AddHandler
 end
 
 svr = MessagePack::RPC::Server.new
-svr.listen('0.0.0.0', 18800, AddHandler.new)
+svr.listen('::', 18800, AddHandler.new)
+#svr.listen('0.0.0.0', 18800, AddHandler.new)
 svr.run
 
 
