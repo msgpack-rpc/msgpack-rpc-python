@@ -8,7 +8,7 @@ MessagePack RPC implementation based on Tornado.
 
     address = msgpackrpc.Address("localhost", 18800)
     client = msgpackrpc.Client(address)
-    result = client.call(:add, 1, 2)  # = > 3  
+    result = client.call('add', 1, 2)  # = > 3  
 
 # Installation
 
