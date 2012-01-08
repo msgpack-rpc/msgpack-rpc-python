@@ -6,3 +6,6 @@ class TimeoutError(RPCError):
 
 class TransportError(RPCError):
     pass
+
+class NoMethodError(RPCError):
+    pass
