@@ -15,5 +15,3 @@ for addrinfo in Socket.getaddrinfo(nil, 18800, :AF_UNSPEC, :STREAM, 0, Socket::A
 end
 
 svr.run
-
-
