@@ -137,28 +137,15 @@ class ServerSocket(BaseSocket):
         BaseSocket.__init__(self, stream)
         self._transport = transport
         self._stream.read_until_close(self.on_read, self.on_read)
-        #self._stream.set_close_callback(self.on_close)
-
-    #def connect(self):
-    #    self._stream.connect(self._transport._address.unpack(), self.on_connect)
-
-    #def on_connect(self):
-    #    self._stream.read_until_close(self.on_read, self.on_read)
-    #    self._transport.on_connect(self)
-
-    #def on_connect_failed(self):
-    #    self._transport.on_connect_failed(self)
 
     def on_close(self):
         self._transport.on_close(self)
 
     def on_request(self, msgid, method, param):
         self._transport._server.on_request(self, msgid, method, param)
-        self._stream.close()
 
     def on_notify(self, method, param):
         self._transport._server.on_request(method, param)
-        self._stream.close()
 
 
 class MessagePackServer(netutil.TCPServer):

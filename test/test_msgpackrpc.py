@@ -40,7 +40,7 @@ class TestMessagePackRPC(unittest.TestCase):
 
     def test_hello(self):
         client = self.setup_env();
-        self.assertEqual(client.call('hello'), "world", "sum result is incorrect")
+        self.assertEqual(client.call('hello'), "world", "hello result is incorrect")
 
     def test_add(self):
         client = self.setup_env();
