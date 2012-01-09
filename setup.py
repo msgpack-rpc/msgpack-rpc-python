@@ -29,8 +29,6 @@ This implementation uses Tornado framework as a backend.
 """,
       packages=['msgpackrpc', 'msgpackrpc/transport'],
       install_requires=['msgpack-python', 'tornado'],
-      test_suite='nose.collector',
-      tests_require=['nose',],
       license="Apache Software License",
       classifiers=[
           'Programming Language :: Python :: 2',
