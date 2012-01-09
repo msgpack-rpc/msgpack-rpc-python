@@ -1,7 +1,7 @@
 import msgpack
 
 from msgpackrpc import inPy3k
-from msgpackrpc import loop
+from msgpackrpc import Loop
 from msgpackrpc import message
 from msgpackrpc.error import RPCError
 from msgpackrpc.future import Future
@@ -21,14 +21,14 @@ class Session(object):
     result to the corresponding future.
     """
 
-    def __init__(self, address, timeout, loop=loop.Loop(), builder=tcp):
+    def __init__(self, address, timeout, loop=None, builder=tcp):
         """\
         :param address: address of the server.
         :param loop:    context object.
         :param builder: builder for creating transport layer
         """
 
-        self._loop = loop
+        self._loop = loop or Loop()
         self._address = address
         self._timeout = timeout
         self._transport = builder.build_transport(self)

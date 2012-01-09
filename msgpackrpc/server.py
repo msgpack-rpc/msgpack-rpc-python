@@ -2,7 +2,7 @@ import msgpack
 
 from msgpackrpc import inPy3k
 from msgpackrpc import error
-from msgpackrpc import loop
+from msgpackrpc import Loop
 from msgpackrpc import message
 from msgpackrpc import session
 from msgpackrpc.transport import tcp
@@ -12,8 +12,8 @@ class Server(session.Session):
     Server is usaful for MessagePack RPC Server.
     """
 
-    def __init__(self, dispatcher, loop=loop.Loop(), builder=tcp):
-        self._loop = loop
+    def __init__(self, dispatcher, loop=None, builder=tcp):
+        self._loop = loop or Loop()
         self._builder = builder
         self._listeners = []
         self._dispatcher = dispatcher

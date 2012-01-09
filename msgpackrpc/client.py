@@ -1,4 +1,4 @@
-from msgpackrpc import loop
+from msgpackrpc import Loop
 from msgpackrpc import session
 from msgpackrpc.transport import tcp
 
@@ -7,7 +7,8 @@ class Client(session.Session):
     Client is usaful for MessagePack RPC API.
     """
 
-    def __init__(self, address, timeout=10, loop=loop.Loop(), builder=tcp):
+    def __init__(self, address, timeout=10, loop=None, builder=tcp):
+        loop = loop or Loop()
         session.Session.__init__(self, address, timeout, loop, builder)
 
         if timeout:
