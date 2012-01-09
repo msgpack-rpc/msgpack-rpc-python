@@ -1,5 +1,6 @@
 import msgpack
 
+from msgpackrpc import inPy3k
 from msgpackrpc import loop
 from msgpackrpc import message
 from msgpackrpc.error import RPCError
@@ -46,7 +47,7 @@ class Session(object):
 
     def send_request(self, method, args):
         # need lock?
-        msgid = self._generator.next()
+        msgid = next(self._generator)
         future = Future(self._loop, self._timeout)
         self._request_table[msgid] = future
         self._transport.send_message([message.REQUEST, msgid, method, args])
@@ -71,8 +72,15 @@ class Session(object):
         Called by the transport layer.
         """
 
+        def _iteritems(dic): # ugly!!!!!!
+            if inPy3k:
+                return dic.items()
+            else:
+                return dic.iteritems()
+
         # set error for all requests
-        for msgid, future in self._request_table.iteritems():
+        #for msgid, future in self._request_table.iteritems():
+        for msgid, future in _iteritems(self._request_table):
             future.set_error(reason)
 
         self._request_table = {}
@@ -115,6 +123,7 @@ class Session(object):
             future = self._request_table.pop(timeout)
             future.set_error("Request timed out")
         self._loop.start()
+
 
 def _NoSyncIDGenerator():
     """\

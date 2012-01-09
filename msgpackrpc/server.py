@@ -1,5 +1,6 @@
 import msgpack
 
+from msgpackrpc import inPy3k
 from msgpackrpc import error
 from msgpackrpc import loop
 from msgpackrpc import message
@@ -12,7 +13,6 @@ class Server(session.Session):
     """
 
     def __init__(self, dispatcher, loop=loop.Loop(), builder=tcp):
-        #session.Session.__init__(self, address, timeout, loop, builder)
         self._loop = loop
         self._builder = builder
         self._listeners = []
@@ -32,7 +32,6 @@ class Server(session.Session):
     def close(self):
         for listener in self._listeners:
             listener.close()
-        #session.Session.close(self)
 
     def on_request(self, sendable, msgid, method, param):
         self.dispatch(method, param, _Responder(sendable, msgid))
@@ -42,6 +41,8 @@ class Server(session.Session):
 
     def dispatch(self, method, param, responder):
         try:
+            if inPy3k:
+                method = method.decode("utf-8")
             if not hasattr(self._dispatcher, method):
                 raise error.NoMethodError("{0} not found".format(method))
             responder.set_result(getattr(self._dispatcher, method)(*param))

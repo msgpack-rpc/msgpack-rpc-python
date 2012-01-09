@@ -16,7 +16,7 @@ MessagePack RPC implementation based on Tornado.
 
 # Dependent modules
 
-* msgpack-python (0.1.10)
+* msgpack-python (0.1.12)
 * tornado (2.1.1)
 
 # TODO

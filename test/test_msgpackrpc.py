@@ -3,6 +3,7 @@ import unittest
 
 import helper
 import msgpackrpc
+from msgpackrpc import inPy3k
 
 
 class TestMessagePackRPC(unittest.TestCase):
@@ -40,11 +41,15 @@ class TestMessagePackRPC(unittest.TestCase):
 
     def test_hello(self):
         client = self.setup_env();
-        self.assertEqual(client.call('hello'), "world", "hello result is incorrect")
+        result = client.call('hello')
+        if inPy3k:
+            result = result.decode("utf-8")
+        self.assertEqual(result, "world", "hello result is incorrect")
 
     def test_add(self):
         client = self.setup_env();
-        self.assertEqual(client.call('sum', 1, 2), 3, "sum result is incorrect")
+        result = client.call('sum', 1, 2)
+        self.assertEqual(result, 3, "sum result is incorrect")
 
 
 if __name__ == '__main__':

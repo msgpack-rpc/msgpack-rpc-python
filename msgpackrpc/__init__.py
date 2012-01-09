@@ -1,3 +1,7 @@
+import sys
+
+inPy3k = sys.version_info[0] == 3
+
 from pkg_resources import get_distribution, DistributionNotFound
 
 try:
