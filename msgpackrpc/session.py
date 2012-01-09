@@ -53,6 +53,12 @@ class Session(object):
 
         return future
 
+    def notify(self, method, *args):
+        def callback():
+            self._loop.stop()
+        self._transport.send_message([message.NOTIFY, method, args], callback=callback)
+        self._loop.start()
+
     def close(self):
         if self._transport:
             self._transport.close()

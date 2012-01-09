@@ -21,8 +21,8 @@ class BaseSocket(object):
     def close(self):
         self._stream.close()
 
-    def send_message(self, message):
-        self._stream.write(self._packer.pack(message))
+    def send_message(self, message, callback=None):
+        self._stream.write(self._packer.pack(message), callback=callback)
 
     def on_read(self, data):
         self._unpacker.feed(data)
@@ -30,8 +30,9 @@ class BaseSocket(object):
             self.on_message(message)
 
     def on_message(self, message, *args):
-        if len(message) != 4:
-            raise Exception("Invalid MessagePack-RPC protocol: message = {0}".format(message))
+        msgsize = len(message)
+        if msgsize != 4 and msgsize != 3:
+            raise RPCError("Invalid MessagePack-RPC protocol: message = {0}".format(message))
 
         msgtype = message[0]
         if msgtype == msgpackrpc.message.REQUEST:
@@ -86,15 +87,15 @@ class ClientTransport(object):
         self._pending = []
         self._sockets = []
 
-    def send_message(self, message):
+    def send_message(self, message, callback=None):
         if len(self._sockets) == 0:
             if self._connecting == 0:
                 self.connect()
                 self._connecting = 1
-            self._pending.append(message)
+            self._pending.append((message, callback))
         else:
             sock = self._sockets[0]
-            sock.send_message(message)
+            sock.send_message(message, callback)
 
     def connect(self):
         stream = IOStream(self._address.socket(), io_loop=self._session._loop._ioloop)
@@ -111,8 +112,8 @@ class ClientTransport(object):
 
     def on_connect(self, sock):
         self._sockets.append(sock)
-        for pending in self._pending:
-            sock.send_message(pending)
+        for pending, callback in self._pending:
+            sock.send_message(pending, callback)
         self._pending = []
 
     def on_connect_failed(self, sock):
@@ -145,7 +146,7 @@ class ServerSocket(BaseSocket):
         self._transport._server.on_request(self, msgid, method, param)
 
     def on_notify(self, method, param):
-        self._transport._server.on_request(method, param)
+        self._transport._server.on_notify(method, param)
 
 
 class MessagePackServer(netutil.TCPServer):
