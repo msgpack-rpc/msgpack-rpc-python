@@ -44,7 +44,7 @@ class Server(session.Session):
             if inPy3k:
                 method = method.decode("utf-8")
             if not hasattr(self._dispatcher, method):
-                raise error.NoMethodError("{0} not found".format(method))
+                raise error.NoMethodError("'{0}' method not found".format(method))
             responder.set_result(getattr(self._dispatcher, method)(*param))
         except Exception as e:
             responder.set_error(str(e))
