@@ -30,7 +30,7 @@ class Future(object):
 
         if self._error_handler is not None:
             self._error_handler(self._error)
-        raise error.RPCError(error)
+        raise error.RPCError(self._error)
 
     def set(self, error=None, result=None):
         self._error = error
