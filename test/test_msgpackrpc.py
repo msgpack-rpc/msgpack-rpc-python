@@ -29,7 +29,7 @@ class TestMessagePackRPC(unittest.TestCase):
         self._thread = threading.Thread(target=_start_server, args=(self._server,))
         self._thread.start()
 
-        self._client = msgpackrpc.Client(self._address)
+        self._client = msgpackrpc.Client(self._address, unpack_encoding='utf-8')
         return self._client;
 
     def tearDown(self):
@@ -40,8 +40,6 @@ class TestMessagePackRPC(unittest.TestCase):
     def test_call(self):
         client = self.setup_env();
         result = client.call('hello')
-        if inPy3k:
-            result = result.decode("utf-8")
         self.assertEqual(result, "world", "'hello' result is incorrect")
 
         result = client.call('sum', 1, 2)
@@ -55,11 +53,7 @@ class TestMessagePackRPC(unittest.TestCase):
         feture1.join()
         feture2.join()
 
-        if inPy3k:
-            result = feture1.result.decode("utf-8")
-        else:
-            result = feture1.result
-        self.assertEqual(result, "world", "'hello' result is incorrect in call_async")
+        self.assertEqual(feture1.result, "world", "'hello' result is incorrect in call_async")
         self.assertEqual(feture2.result, 3, "'sum' result is incorrect in call_async")
 
     def test_notify(self):
@@ -70,16 +64,17 @@ class TestMessagePackRPC(unittest.TestCase):
             client.notify('sum', 1, 2)
         except:
             result = False
-        self.assert_(result)
+        self.assertTrue(result)
 
     def test_unknown_method(self):
         client = self.setup_env();
         self.assertRaises(error.RPCError, lambda: client.call('unknown', True))
         try:
             client.call('unknown', True)
-            self.assert_(False)
+            self.assertTrue(False)
         except error.RPCError as e:
-            self.assertEqual(e.message, "'unknown' method not found", "Error message mismatched")
+            message = e.args[0]
+            self.assertEqual(message, "'unknown' method not found", "Error message mismatched")
 
 
 if __name__ == '__main__':
