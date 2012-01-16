@@ -42,8 +42,8 @@ or
 
 ## Performance
 
-OS: Mac OS X ver 10.6.8
-CPU: Intel Core 2 Duo 2.13GHz
+OS: Mac OS X ver 10.6.8<br />
+CPU: Intel Core 2 Duo 2.13GHz<br />
 Memory: 4GB 1067MHz DDR3
 
 <table>
