@@ -1,34 +1,40 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from msgpackrpc.client import *
-from msgpackrpc.transport import tcp
-
+import msgpackrpc
 import echoserver
 
-SERVER = PORT = None
+ADDR = SERVER = THREAD = None
+
 
 def setup():
-    global SERVER, PORT
-    SERVER, PORT = echoserver.serve()
+    global ADDR, SERVER, THREAD
+    (ADDR, SERVER, THREAD) = echoserver.serve()
+
 
 def teardown():
-    global SERVER, PORT
-    SERVER.shutdown()
-    SERVER = PORT = None
+    global SERVER, THREAD
+    SERVER.stop()
+    THREAD.join()
+
 
 def test_client():
-    client = Client(tcp.TCPTransport, ('localhost', PORT), {})
+    global ADDR
+    client = msgpackrpc.Client(ADDR, unpack_encoding = 'utf-8')
 
-    f1 = client.send_request('echo', 'foo')
-    f2 = client.send_request('echo', 'bar')
-    f3 = client.send_request('echo', 'baz')
+    f1 = client.call('echo', 'foo')
+    f2 = client.call('echo', 'bar')
+    f3 = client.call('echo', 'baz')
 
-    assert f2.result() == 'bar'
-    assert f1.result() == 'foo'
-    assert f3.result() == 'baz'
+    assert f2 == 'bar'
+    assert f1 == 'foo'
+    assert f3 == 'baz'
+
+    print "EchoHandler#echo via msgpackrpc"
+
 
 if __name__ == '__main__':
     setup()
     test_client()
     teardown()
+
