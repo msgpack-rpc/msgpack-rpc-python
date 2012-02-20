@@ -44,7 +44,7 @@ class Future(object):
         return self._result
 
     def set_result(self, result):
-        assert result
+        assert result is not None
         self.set(result=result)
 
     @property
@@ -52,7 +52,7 @@ class Future(object):
         return self._error
 
     def set_error(self, error):
-        assert error
+        assert error is not None
         self.set(error=error)
 
     def attach_callback(self, callback):

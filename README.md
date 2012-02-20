@@ -10,7 +10,7 @@ MessagePack RPC implementation based on Tornado.
 import msgpackrpc
 
 class SumServer:
-  def sum(x, y):
+  def sum(self, x, y):
     return x + y
 
 server = msgpackrpc.Server(SumServer())
