@@ -83,6 +83,7 @@ class ClientTransport(object):
         self._connecting = 0
         self._pending = []
         self._sockets = []
+        self._closed  = False
 
     def send_message(self, message, callback=None):
         if len(self._sockets) == 0:
@@ -106,6 +107,7 @@ class ClientTransport(object):
         self._connecting = 0
         self._pending = []
         self._sockets = []
+        self._closed  = True
 
     def on_connect(self, sock):
         self._sockets.append(sock)
@@ -123,6 +125,10 @@ class ClientTransport(object):
             self._session.on_connect_failed("Retry connection over the limit")
 
     def on_close(self, sock):
+        # Avoid calling self.on_connect_failed after self.close called.
+        if self._closed:
+            return
+
         if sock in self._sockets:
             self._sockets.remove(sock)
         else:
