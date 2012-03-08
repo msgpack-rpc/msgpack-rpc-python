@@ -17,10 +17,10 @@ if major >= 3:
     kwargs["use_2to3"] = True
 
 setup(name='msgpack-rpc-python',
-      version='0.2.1',
+      version='0.2.2',
       author='Masahiro Nakagawa',
       author_email='repeatedly@gmail.com',
-      url="https://github.com/msgpack/msgpack-rpc",
+      url="https://github.com/msgpack/msgpack-rpc-python",
       description="MessagePack RPC",
       long_description="""\
 MessagePack RPC for Python.
