@@ -28,7 +28,7 @@ class Address(object):
                                  socket.SOCK_STREAM, 0, socket.AI_PASSIVE)[0]
         af, socktype, proto, canonname, sockaddr = res
         sock = socket.socket(af, socktype, proto)
-        set_close_exec(sock)
+        set_close_exec(sock.fileno())
         sock.setblocking(0)
         if af == socket.AF_INET6:
             if hasattr(socket, "IPPROTO_IPV6"):
