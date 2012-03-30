@@ -15,6 +15,12 @@ class TestMessagePackRPC(unittest.TestCase):
         def sum(self, x, y):
             return x + y
 
+        def nil(self):
+            return None
+
+        def raise_error(self):
+            raise Exception('error')
+
 
     def setUp(self):
         self._address = msgpackrpc.Address('localhost', helper.unused_port())
@@ -39,32 +45,45 @@ class TestMessagePackRPC(unittest.TestCase):
 
     def test_call(self):
         client = self.setup_env();
-        result = client.call('hello')
-        self.assertEqual(result, "world", "'hello' result is incorrect")
 
-        result = client.call('sum', 1, 2)
-        self.assertEqual(result, 3, "'sum' result is incorrect")
+        result1 = client.call('hello')
+        result2 = client.call('sum', 1, 2)
+        result3 = client.call('nil')
+
+        self.assertEqual(result1, "world", "'hello' result is incorrect")
+        self.assertEqual(result2, 3, "'sum' result is incorrect")
+        self.assertIsNone(result3, "'nil' result is incorrect")
 
     def test_call_async(self):
         client = self.setup_env();
 
-        feture1 = client.call_async('hello')
-        feture2 = client.call_async('sum', 1, 2)
-        feture1.join()
-        feture2.join()
+        future1 = client.call_async('hello')
+        future2 = client.call_async('sum', 1, 2)
+        future3 = client.call_async('nil')
+        future1.join()
+        future2.join()
+        future3.join()
 
-        self.assertEqual(feture1.result, "world", "'hello' result is incorrect in call_async")
-        self.assertEqual(feture2.result, 3, "'sum' result is incorrect in call_async")
+        self.assertEqual(future1.result, "world", "'hello' result is incorrect in call_async")
+        self.assertEqual(future2.result, 3, "'sum' result is incorrect in call_async")
+        self.assertIsNone(future3.result, "'nil' result is incorrect in call_async")
 
     def test_notify(self):
         client = self.setup_env();
+
         result = True
         try:
             client.notify('hello')
             client.notify('sum', 1, 2)
+            client.notify('nil')
         except:
             result = False
+
         self.assertTrue(result)
+
+    def test_raise_error(self):
+        client = self.setup_env();
+        self.assertRaises(error.RPCError, lambda: client.call('raise_error'))
 
     def test_unknown_method(self):
         client = self.setup_env();
@@ -75,7 +94,6 @@ class TestMessagePackRPC(unittest.TestCase):
         except error.RPCError as e:
             message = e.args[0]
             self.assertEqual(message, "'unknown' method not found", "Error message mismatched")
-
 
 if __name__ == '__main__':
     unittest.main()
