@@ -3,7 +3,6 @@ import unittest
 
 import helper
 import msgpackrpc
-from msgpackrpc import inPy3k
 from msgpackrpc import error
 
 

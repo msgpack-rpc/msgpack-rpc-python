@@ -5,14 +5,14 @@ import distutils.core
 import sys
 
 try:
-    from setuptools import setup, find_packages
+    from setuptools import setup
 except ImportError:
     setup = distutils.core.setup
     pass
 
 kwargs = {}
 major, minor = sys.version_info[:2]
-if major >= 3:
+if major == 3:
     import setuptools  # setuptools is required for use_2to3
     kwargs["use_2to3"] = True
 

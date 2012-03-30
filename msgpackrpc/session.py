@@ -1,6 +1,5 @@
 import msgpack
 
-from msgpackrpc import inPy3k
 from msgpackrpc import Loop
 from msgpackrpc import message
 from msgpackrpc.error import RPCError
@@ -51,7 +50,6 @@ class Session(object):
         future = Future(self._loop, self._timeout)
         self._request_table[msgid] = future
         self._transport.send_message([message.REQUEST, msgid, method, args])
-
         return future
 
     def notify(self, method, *args):
@@ -67,11 +65,10 @@ class Session(object):
         self._request_table = {}
 
     def on_connect_failed(self, reason):
-        """\
+        """
         The callback called when the connection failed.
         Called by the transport layer.
         """
-
         # set error for all requests
         #for msgid, future in self._request_table.iteritems():
         for msgid, future in _iteritems(self._request_table):
@@ -105,7 +102,7 @@ class Session(object):
 
     def step_timeout(self):
         timeouts = []
-        for msgid, future in _iteritems(self._request_table):
+        for msgid, future in self._request_table.iteritems():
             if future.step_timeout():
                 timeouts.append(msgid)
 
@@ -118,20 +115,14 @@ class Session(object):
             future.set_error("Request timed out")
         self._loop.start()
 
-def _iteritems(dic): # ugly!!!!!!
-    if inPy3k:
-        return dic.items()
-    else:
-        return dic.iteritems()
 
 def _NoSyncIDGenerator():
-    """\
+    """
     Message ID Generator.
 
     NOTE: Don't use in multithread. If you want use this
     in multithreaded application, use lock.
     """
-
     counter = 0
     while True:
         yield counter

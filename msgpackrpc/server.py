@@ -1,6 +1,6 @@
 import msgpack
 
-from msgpackrpc import inPy3k
+from msgpackrpc.compat import force_str
 from msgpackrpc import error
 from msgpackrpc import Loop
 from msgpackrpc import message
@@ -42,8 +42,7 @@ class Server(session.Session):
 
     def dispatch(self, method, param, responder):
         try:
-            if inPy3k and not isinstance(method, str):
-                method = method.decode("utf-8")
+            method = force_str(method)
             if not hasattr(self._dispatcher, method):
                 raise error.NoMethodError("'{0}' method not found".format(method))
             responder.set_result(getattr(self._dispatcher, method)(*param))
