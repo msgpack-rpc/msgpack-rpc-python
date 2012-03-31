@@ -1,11 +1,4 @@
-from pkg_resources import get_distribution, DistributionNotFound
-
-try:
-    version = get_distribution("msgpackrpc").version
-except DistributionNotFound:
-    version = "trunk"
-
-__version__ = version
+from _version import __version__
 
 # shortcut for most-used symbols
 from msgpackrpc.loop import Loop

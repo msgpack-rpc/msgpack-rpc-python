@@ -4,11 +4,14 @@
 import distutils.core
 import sys
 
+# Avoid importing msgpackrpc to make sdist without installing
+# requiring packages.
+exec(open('msgpackrpc/_version.py').read())
+
 try:
     from setuptools import setup
 except ImportError:
     setup = distutils.core.setup
-    pass
 
 kwargs = {}
 major, minor = sys.version_info[:2]
@@ -17,7 +20,7 @@ if major == 3:
     kwargs["use_2to3"] = True
 
 setup(name='msgpack-rpc-python',
-      version='0.2.2',
+      version=__version__,
       author='Masahiro Nakagawa',
       author_email='repeatedly@gmail.com',
       url="https://github.com/msgpack/msgpack-rpc-python",
