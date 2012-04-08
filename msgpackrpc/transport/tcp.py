@@ -11,7 +11,7 @@ from msgpackrpc import error
 class BaseSocket(object):
     def __init__(self, stream, encodings):
         self._stream = stream
-        self._packer = msgpack.Packer(encoding=encodings[0])
+        self._packer = msgpack.Packer(encoding=encodings[0], default=lambda x: x.to_msgpack())
         self._unpacker = msgpack.Unpacker(encoding=encodings[1])
 
     def close(self):

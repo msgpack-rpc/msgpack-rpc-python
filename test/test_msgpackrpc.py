@@ -7,6 +7,30 @@ from msgpackrpc import error
 
 
 class TestMessagePackRPC(unittest.TestCase):
+
+    class TestArg:
+        ''' this class must know completely how to deserialize '''
+        def __init__(self, a, b, c):
+            self.a = a
+            self.b = b
+            self.c = c
+
+        def to_msgpack(self):
+            return (self.a, self.b, self.c)
+
+        def add(self, rhs):
+            self.a += rhs.a
+            self.b -= rhs.b
+            self.c *= rhs.c
+            return self
+
+        def __eq__(self, rhs):
+            return (self.a == rhs.a and self.b == rhs.b and self.c == rhs.c)
+
+        @staticmethod
+        def from_msgpack(arg):
+            return TestMessagePackRPC.TestArg(arg[0], arg[1], arg[2])
+
     class TestServer(object):
         def hello(self):
             return "world"
@@ -16,6 +40,11 @@ class TestMessagePackRPC(unittest.TestCase):
 
         def nil(self):
             return None
+
+        def add_arg(self, arg0, arg1):
+            lhs = TestMessagePackRPC.TestArg.from_msgpack(arg0)
+            rhs = TestMessagePackRPC.TestArg.from_msgpack(arg1)
+            return lhs.add(rhs)
 
         def raise_error(self):
             raise Exception('error')
@@ -52,6 +81,21 @@ class TestMessagePackRPC(unittest.TestCase):
         self.assertEqual(result1, "world", "'hello' result is incorrect")
         self.assertEqual(result2, 3, "'sum' result is incorrect")
         self.assertIsNone(result3, "'nil' result is incorrect")
+
+    def test_call_userdefined_arg(self):
+        client = self.setup_env();
+
+        arg = TestMessagePackRPC.TestArg(0, 1, 2)
+        arg2 = TestMessagePackRPC.TestArg(23, 3, -23)
+
+        result1 = TestMessagePackRPC.TestArg.from_msgpack(client.call('add_arg', arg, arg2))
+        self.assertEqual(result1, arg.add(arg2))
+
+        result2 = TestMessagePackRPC.TestArg.from_msgpack(client.call('add_arg', arg2, arg))
+        self.assertEqual(result2, arg2.add(arg))
+
+        result3 = TestMessagePackRPC.TestArg.from_msgpack(client.call('add_arg', result1, result2))
+        self.assertEqual(result3, result1.add(result2))
 
     def test_call_async(self):
         client = self.setup_env();
