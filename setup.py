@@ -1,23 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-import distutils.core
-import sys
-
-# Avoid importing msgpackrpc to make sdist without installing
-# requiring packages.
+# Define __version__ without importing msgpackrpc.
+# This allows building sdist without installing any 3rd party packages.
 exec(open('msgpackrpc/_version.py').read())
 
 try:
     from setuptools import setup
 except ImportError:
-    setup = distutils.core.setup
-
-kwargs = {}
-major, minor = sys.version_info[:2]
-if major == 3:
-    import setuptools  # setuptools is required for use_2to3
-    kwargs["use_2to3"] = True
+    from distutils.core import setup
 
 setup(name='msgpack-rpc-python',
       version=__version__,
@@ -37,5 +28,4 @@ This implementation uses Tornado framework as a backend.
           'Programming Language :: Python :: 2',
           'Programming Language :: Python :: 3',
           'License :: OSI Approved :: Apache Software License'],
-      **kwargs
       )

@@ -1,4 +1,4 @@
-from _version import __version__
+from ._version import __version__
 
 # shortcut for most-used symbols
 from msgpackrpc.loop import Loop

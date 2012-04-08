@@ -6,6 +6,12 @@ if inPy3k:
         if isinstance(s, bytes):
             return s.decode('utf-8')
         return str(s)
+
+    def iteritems(d):
+        return d.items()
 else:
     def force_str(s):
         return str(s)
+
+    def iteritems(d):
+        return d.iteritems()

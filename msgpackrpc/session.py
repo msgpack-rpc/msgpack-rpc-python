@@ -5,6 +5,7 @@ from msgpackrpc import message
 from msgpackrpc.error import RPCError
 from msgpackrpc.future import Future
 from msgpackrpc.transport import tcp
+from msgpackrpc.compat import iteritems
 
 
 class Session(object):
@@ -70,8 +71,7 @@ class Session(object):
         Called by the transport layer.
         """
         # set error for all requests
-        #for msgid, future in self._request_table.iteritems():
-        for msgid, future in _iteritems(self._request_table):
+        for msgid, future in iteritems(self._request_table):
             future.set_error(reason)
 
         self._request_table = {}
@@ -102,7 +102,7 @@ class Session(object):
 
     def step_timeout(self):
         timeouts = []
-        for msgid, future in self._request_table.iteritems():
+        for msgid, future in iteritems(self._request_table):
             if future.step_timeout():
                 timeouts.append(msgid)
 
