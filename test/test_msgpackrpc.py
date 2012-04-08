@@ -89,13 +89,13 @@ class TestMessagePackRPC(unittest.TestCase):
         arg = TestMessagePackRPC.TestArg(0, 1, 2)
         arg2 = TestMessagePackRPC.TestArg(23, 3, -23)
 
-        result1 = TestMessagePackRPC.TestArg.from_msgpack(client.call('add_arg',arg, arg2))
+        result1 = TestMessagePackRPC.TestArg.from_msgpack(client.call('add_arg', arg, arg2))
         self.assertEqual(result1, arg.add(arg2))
 
-        result2 = TestMessagePackRPC.TestArg.from_msgpack(client.call('add_arg',arg2, arg))
+        result2 = TestMessagePackRPC.TestArg.from_msgpack(client.call('add_arg', arg2, arg))
         self.assertEqual(result2, arg2.add(arg))
 
-        result3 = TestMessagePackRPC.TestArg.from_msgpack(client.call('add_arg',result1, result2))
+        result3 = TestMessagePackRPC.TestArg.from_msgpack(client.call('add_arg', result1, result2))
         self.assertEqual(result3, result1.add(result2))
 
     def test_call_async(self):
