@@ -9,9 +9,9 @@ MessagePack RPC implementation based on Tornado.
 ```python
 import msgpackrpc
 
-class SumServer:
-  def sum(self, x, y):
-    return x + y
+class SumServer(object):
+    def sum(self, x, y):
+      return x + y
 
 server = msgpackrpc.Server(SumServer())
 server.listen(msgpackrpc.Address("localhost", 18800))
