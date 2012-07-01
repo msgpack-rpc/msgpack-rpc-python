@@ -97,7 +97,7 @@ class Session(object):
         self._loop.stop()
 
     def on_timeout(self, msgid):
-        future = self._request_table.pop(timeout)
+        future = self._request_table.pop(msgid)
         future.set_error("Request timed out")
 
     def step_timeout(self):
