@@ -1,8 +1,5 @@
-import msgpack
-
 from msgpackrpc import Loop
 from msgpackrpc import message
-from msgpackrpc.error import RPCError
 from msgpackrpc.future import Future
 from msgpackrpc.transport import tcp
 from msgpackrpc.compat import iteritems
