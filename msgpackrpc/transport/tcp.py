@@ -1,11 +1,9 @@
-import socket
-
 import msgpack
 from tornado import netutil
 from tornado.iostream import IOStream
 
 import msgpackrpc.message
-from msgpackrpc import error
+from msgpackrpc.error import RPCError
 
 
 class BaseSocket(object):
