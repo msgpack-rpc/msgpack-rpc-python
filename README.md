@@ -37,26 +37,28 @@ or
 
 ## Dependent modules
 
-* msgpack-python (0.1.12)
-* tornado (2.1.1)
+* msgpack-python (>= 0.1.12)
+* tornado (>= 2.1.1)
 
 ## Performance
 
-OS: Mac OS X ver 10.6.8<br />
-CPU: Intel Core 2 Duo 2.13GHz<br />
-Memory: 4GB 1067MHz DDR3
+OS: Mac OS X ver 10.8.2<br />
+CPU: Intel Core i7 2GHz<br />
+Memory: 8GB 1600MHz DDR3
 
 <table>
   <tr>
-    <th></th><th>Request(call/s)</th><th>Notify(call/s)</th>
+    <th></th><th>Request(QPS)</th><th>Notify(QPS)</th>
   </tr>
   <tr>
-    <td>2.7.1</td><td>3076</td><td>14182</td>
+    <td>2.7.2</td><td>4782</td><td>18315</td>
   </tr>
   <tr>
-    <td>3.2.2</td><td>2957</td><td>13472</td>
+    <td>3.2.3</td><td>4700</td><td>16667</td>
   </tr>
 </table>
+
+Test code are available in example directory(bench_client.py and bench_server.py).
 
 ## TODO
 
