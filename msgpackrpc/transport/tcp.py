@@ -3,7 +3,7 @@ from tornado import netutil
 from tornado.iostream import IOStream
 
 import msgpackrpc.message
-from msgpackrpc.error import RPCError
+from msgpackrpc.error import RPCError, TransportError
 
 
 class BaseSocket(object):
@@ -120,7 +120,7 @@ class ClientTransport(object):
         else:
             self._connecting = 0
             self._pending = []
-            self._session.on_connect_failed("Retry connection over the limit")
+            self._session.on_connect_failed(TransportError("Retry connection over the limit"))
 
     def on_close(self, sock):
         # Avoid calling self.on_connect_failed after self.close called.

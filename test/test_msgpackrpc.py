@@ -1,3 +1,4 @@
+from time import sleep
 import threading
 try:
     import unittest2 as unittest
@@ -10,6 +11,7 @@ from msgpackrpc import error
 
 
 class TestMessagePackRPC(unittest.TestCase):
+    ENABLE_TIMEOUT_TEST = False
 
     class TestArg:
         ''' this class must know completely how to deserialize '''
@@ -52,6 +54,9 @@ class TestMessagePackRPC(unittest.TestCase):
         def raise_error(self):
             raise Exception('error')
 
+        def long_exec(self):
+            sleep(3)
+            return 'finish!'
 
     def setUp(self):
         self._address = msgpackrpc.Address('localhost', helper.unused_port())
@@ -141,5 +146,30 @@ class TestMessagePackRPC(unittest.TestCase):
             message = e.args[0]
             self.assertEqual(message, "'unknown' method not found", "Error message mismatched")
 
+    def test_connect_failed(self):
+        client = self.setup_env();
+        client = msgpackrpc.Client(msgpackrpc.Address('localhost', self._address.port - 10), unpack_encoding='utf-8')
+        self.assertRaises(error.TransportError, lambda: client.call('hello'))
+
+    def test_timeout(self):
+        client = self.setup_env();
+
+        if self.__class__.ENABLE_TIMEOUT_TEST:
+            self.assertEqual(client.call('long_exec'), 'finish!', "'long_exec' result is incorrect")
+
+            client = msgpackrpc.Client(self._address, timeout=1, unpack_encoding='utf-8')
+            self.assertRaises(error.TimeoutError, lambda: client.call('long_exec'))
+        else:
+            print("Skip test_timeout")
+
+
 if __name__ == '__main__':
+    import sys
+
+    try:
+        sys.argv.remove('--timeout-test')
+        TestMessagePackRPC.ENABLE_TIMEOUT_TEST = True
+    except:
+        pass
+
     unittest.main()

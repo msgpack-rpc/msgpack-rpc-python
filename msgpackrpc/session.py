@@ -3,6 +3,7 @@ from msgpackrpc import message
 from msgpackrpc.future import Future
 from msgpackrpc.transport import tcp
 from msgpackrpc.compat import iteritems
+from msgpackrpc.error import TimeoutError
 
 
 class Session(object):
@@ -109,7 +110,7 @@ class Session(object):
         self._loop.stop()
         for timeout in timeouts:
             future = self._request_table.pop(timeout)
-            future.set_error("Request timed out")
+            future.set_error(TimeoutError("Request timed out"))
         self._loop.start()
 
 

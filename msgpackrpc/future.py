@@ -39,7 +39,10 @@ class Future(object):
                 if self._error_handler is not None:
                     self._error_handler(self._error)
                 else:
-                    raise error.RPCError(self._error)
+                    if isinstance(self._error, error.RPCError):
+                        raise self._error
+                    else:
+                        raise error.RPCError(self._error)
             else:
                 return self._result
 
