@@ -1,4 +1,6 @@
+<!--
 [![Build Status](https://travis-ci.org/msgpack/msgpack-rpc-python.png)](https://travis-ci.org/msgpack/msgpack-rpc-python)
+-->
 
 # MessagePack RPC for Python
 
