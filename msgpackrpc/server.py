@@ -45,11 +45,37 @@ class Server(session.Session):
             method = force_str(method)
             if not hasattr(self._dispatcher, method):
                 raise error.NoMethodError("'{0}' method not found".format(method))
-            responder.set_result(getattr(self._dispatcher, method)(*param))
+
+            result = getattr(self._dispatcher, method)(*param)
+            if isinstance(result, AsyncResult):
+                result.set_responder(responder)
+            else:
+                responder.set_result(result)
         except Exception as e:
             responder.set_error(str(e))
 
         # TODO: Support advanced and async return
+
+
+class AsyncResult:
+    def __init__(self):
+        self._responder = None
+        self._result = None
+
+    def set_result(self, value, error=None):
+        if self._responder is not None:
+            self._responder.set_result(value, error)
+        else:
+            self._result = [value, error]
+
+    def set_error(self, error, value=None):
+        self.set_result(value, error)
+
+    def set_responder(self, responder):
+        self._responder = responder
+        if self._result is not None:
+            self._responder.set_result(*self._result)
+            self._result = None
 
 
 class _Responder:

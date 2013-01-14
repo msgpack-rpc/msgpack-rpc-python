@@ -84,7 +84,7 @@ Test code are available in example directory(bench_client.py and bench_server.py
 
 ## TODO
 
-* Add advanced and async return to Server.
+* Add advanced return to Server.
 * UDP, UNIX Domain support
 * Utilities (MultiFuture, SessionPool)
 * Support pyev for performance if needed

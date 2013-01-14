@@ -58,6 +58,14 @@ class TestMessagePackRPC(unittest.TestCase):
             sleep(3)
             return 'finish!'
 
+        def async_result(self):
+            ar = msgpackrpc.server.AsyncResult()
+            def do_async():
+                sleep(2)
+                ar.set_result("You are async!")
+            threading.Thread(target=do_async).start()
+            return ar
+
     def setUp(self):
         self._address = msgpackrpc.Address('localhost', helper.unused_port())
 
@@ -145,6 +153,10 @@ class TestMessagePackRPC(unittest.TestCase):
         except error.RPCError as e:
             message = e.args[0]
             self.assertEqual(message, "'unknown' method not found", "Error message mismatched")
+
+    def test_async_result(self):
+        client = self.setup_env();
+        self.assertEqual(client.call('async_result'), "You are async!")
 
     def test_connect_failed(self):
         client = self.setup_env();
