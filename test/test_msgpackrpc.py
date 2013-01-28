@@ -70,14 +70,22 @@ class TestMessagePackRPC(unittest.TestCase):
         self._address = msgpackrpc.Address('localhost', helper.unused_port())
 
     def setup_env(self):
+        def _on_started():
+            self._server._loop.dettach_periodic_callback()
+            lock.release()
         def _start_server(server):
+            server._loop.attach_periodic_callback(_on_started, 1)
             server.start()
             server.close()
 
         self._server = msgpackrpc.Server(TestMessagePackRPC.TestServer())
         self._server.listen(self._address)
         self._thread = threading.Thread(target=_start_server, args=(self._server,))
+
+        lock = threading.Lock()
         self._thread.start()
+        lock.acquire()
+        lock.acquire()   # wait for the server to start
 
         self._client = msgpackrpc.Client(self._address, unpack_encoding='utf-8')
         return self._client;
