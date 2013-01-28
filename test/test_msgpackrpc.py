@@ -168,7 +168,8 @@ class TestMessagePackRPC(unittest.TestCase):
 
     def test_connect_failed(self):
         client = self.setup_env();
-        client = msgpackrpc.Client(msgpackrpc.Address('localhost', self._address.port - 10), unpack_encoding='utf-8')
+        port = helper.unused_port()
+        client = msgpackrpc.Client(msgpackrpc.Address('localhost', port), unpack_encoding='utf-8')
         self.assertRaises(error.TransportError, lambda: client.call('hello'))
 
     def test_timeout(self):
