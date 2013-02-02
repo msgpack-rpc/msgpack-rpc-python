@@ -54,7 +54,7 @@ class Server(session.Session):
         except Exception as e:
             responder.set_error(str(e))
 
-        # TODO: Support advanced and async return
+        # TODO: Support advanced return
 
 
 class AsyncResult:
