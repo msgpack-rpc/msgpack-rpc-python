@@ -1,5 +1,5 @@
 import msgpack
-from tornado import netutil
+from tornado import tcpserver
 from tornado.iostream import IOStream
 
 import msgpackrpc.message
@@ -150,11 +150,11 @@ class ServerSocket(BaseSocket):
         self._transport._server.on_notify(method, param)
 
 
-class MessagePackServer(netutil.TCPServer):
+class MessagePackServer(tcpserver.TCPServer):
     def __init__(self, transport, io_loop=None, encodings=None):
         self._transport = transport
         self._encodings = encodings
-        netutil.TCPServer.__init__(self, io_loop=io_loop)
+        tcpserver.TCPServer.__init__(self, io_loop=io_loop)
 
     def handle_stream(self, stream, address):
         ServerSocket(stream, self._transport, self._encodings)
