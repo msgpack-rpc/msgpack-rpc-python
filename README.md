@@ -20,8 +20,8 @@ or
 
 ### Dependent modules
 
-* msgpack-python (>= 0.1.12)
-* tornado (>= 2.1.1)
+* msgpack-python (>= 0.3)
+* tornado (>= 3)
 
 ## Example
 
@@ -64,19 +64,22 @@ Run with timeout test(Timeout test takes about 5 seconds)
 
 ## Performance
 
-OS: Mac OS X ver 10.8.2<br />
-CPU: Intel Core i7 2GHz<br />
-Memory: 8GB 1600MHz DDR3
+OS: Mac OS X ver 10.8.3<br />
+CPU: Intel Core i7 2.7 GHz<br />
+Memory: 16 GB 1600 MHz DDR3
 
 <table>
   <tr>
-    <th></th><th>Request(QPS)</th><th>Notify(QPS)</th>
+    <th></th><th>call(QPS)</th><th>async(QPS)</th><th>notify(QPS)</th>
   </tr>
   <tr>
-    <td>2.7.2</td><td>4782</td><td>18315</td>
+    <td>2.7.3</td><td>5903</td><td>6040</td><td>24877</td>
   </tr>
   <tr>
-    <td>3.2.3</td><td>4700</td><td>16667</td>
+    <td>3.3.0</td><td>5493</td><td>5812</td><td>23634</td>
+  </tr>
+  <tr>
+    <td>PyPy 1.9.0 with GCC 4.2.1</td><td>5519</td><td>9729</td><td>46406</td>
   </tr>
 </table>
 
@@ -87,7 +90,6 @@ Test code are available in example directory(bench_client.py and bench_server.py
 * Add advanced return to Server.
 * UDP, UNIX Domain support
 * Utilities (MultiFuture, SessionPool)
-* Support pyev for performance if needed
 
 ## Copyright
 
