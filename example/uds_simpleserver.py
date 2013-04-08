@@ -3,7 +3,6 @@
 '''
 
 import msgpackrpc.udsaddress
-from msgpackrpc.transport import euds
 from msgpackrpc.transport import uds
 class SumServer(object):
     def sum(self, x, y):
