@@ -7,6 +7,10 @@ from tornado.netutil import bind_unix_socket
 from tornado import tcpserver
 from tornado.iostream import IOStream
 
+# Much of the implementation will be same as that of tcp module
+# Changes required for unix domain socket support are done in this module
+# Rest will be automatically used from tcp
+
 # Create namespace equals
 BaseSocket = msgpackrpc.transport.tcp.BaseSocket
 ClientSocket = msgpackrpc.transport.tcp.ClientSocket
