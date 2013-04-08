@@ -1,6 +1,40 @@
 <!--
 [![Build Status](https://travis-ci.org/msgpack/msgpack-rpc-python.png)](https://travis-ci.org/msgpack/msgpack-rpc-python)
 -->
+# Unix Domain Socket support
+Unix domain socket support is now available for msgpack-rpc. Sample examples below.
+
+## UDS examples
+
+### Server
+
+```python
+import msgpackrpc.udsaddress
+from msgpackrpc.transport import euds
+from msgpackrpc.transport import uds
+class SumServer(object):
+    def sum(self, x, y):
+        return x + y
+
+# Use builder as uds. default builder is tcp which creates tcp sockets
+server = msgpackrpc.Server(SumServer(), builder=uds)
+# Use UDSAddress instead of msgpackrpc.Address
+server.listen(msgpackrpc.udsaddress.UDSAddress('/tmp/exrpc'))
+server.start()
+```
+
+### Client
+```python
+import msgpackrpc.udsaddress
+from msgpackrpc.transport import uds
+
+#Use UDSAddress instead of default Address object
+client = msgpackrpc.Client(msgpackrpc.udsaddress.UDSAddress("/tmp/exrpc"), builder=uds)
+result = client.call('sum', 1, 2)  # = > 
+print "Sum of 1 and 2 : %d" % result
+```
+
+Go through the below sections for general usage of Message Pack RPC Library
 
 # MessagePack RPC for Python
 
