@@ -1,9 +1,7 @@
 '''
-Created on Apr 5, 2013
-
 @author: hvishwanath | harish.shastry@gmail.com
 '''
-import msgpackrpc
+
 import msgpackrpc.udsaddress
 from msgpackrpc.transport import euds
 from msgpackrpc.transport import uds

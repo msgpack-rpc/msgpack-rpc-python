@@ -1,3 +1,7 @@
+'''
+@author: hvishwanath | harish.shastry@gmail.com
+'''
+
 from msgpackrpc.transport import uds
 from time import sleep
 import threading
