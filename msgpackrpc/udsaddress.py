@@ -1,3 +1,9 @@
+'''
+Created on Apr 5, 2013
+
+@author: hvishwanath | harish.shastry@gmail.com
+'''
+
 import socket
 from tornado.platform.auto import set_close_exec
     

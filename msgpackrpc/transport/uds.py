@@ -1,3 +1,9 @@
+'''
+Created on Apr 5, 2013
+
+@author: hvishwanath | harish.shastry@gmail.com
+'''
+
 import msgpackrpc.transport
 from tornado.netutil import bind_unix_socket
 from tornado import tcpserver
