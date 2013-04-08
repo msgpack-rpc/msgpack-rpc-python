@@ -31,7 +31,7 @@ class UDSAddress(object):
         return self._host
     
     def socket(self, family=socket.AF_UNSPEC):
-        """Return a Unix domain socket"""
+        """Return a Unix domain socket instead of tcp socket"""
 
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         set_close_exec(sock.fileno())
