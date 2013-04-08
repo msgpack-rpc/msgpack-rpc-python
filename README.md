@@ -10,7 +10,6 @@ Unix domain socket support is now available for msgpack-rpc. Sample examples bel
 
 ```python
 import msgpackrpc.udsaddress
-from msgpackrpc.transport import euds
 from msgpackrpc.transport import uds
 class SumServer(object):
     def sum(self, x, y):
