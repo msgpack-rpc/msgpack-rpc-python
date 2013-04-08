@@ -14,7 +14,6 @@ import helper
 import msgpackrpc
 from msgpackrpc import error
 
-
 class TestMessagePackRPC(unittest.TestCase):
     ENABLE_TIMEOUT_TEST = False
 
@@ -72,6 +71,7 @@ class TestMessagePackRPC(unittest.TestCase):
             return ar
 
     def setUp(self):
+        # Create UDSAddress
         self._address = msgpackrpc.UDSAddress('/tmp/unusedsocket')
 
     def setup_env(self):
@@ -82,7 +82,8 @@ class TestMessagePackRPC(unittest.TestCase):
             server._loop.attach_periodic_callback(_on_started, 1)
             server.start()
             server.close()
-
+        
+        # Use builder=uds
         self._server = msgpackrpc.Server(TestMessagePackRPC.TestServer(), builder=uds)
         self._server.listen(self._address)
         self._thread = threading.Thread(target=_start_server, args=(self._server,))
