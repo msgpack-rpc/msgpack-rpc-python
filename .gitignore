@@ -4,3 +4,6 @@
 *.pyc
 *.pyo
 .tox
+
+# jetbrains ide
+/.idea/
