@@ -162,13 +162,13 @@ class MessagePackServer(tcpserver.TCPServer):
 
 class ServerTransport(object):
     def __init__(self, address, encodings=('utf-8', None)):
-        self._address = address;
+        self._address = address
         self._encodings = encodings
 
     def listen(self, server):
-        self._server = server;
+        self._server = server
         self._mp_server = MessagePackServer(self, io_loop=self._server._loop._ioloop, encodings=self._encodings)
-        self._mp_server.listen(self._address.port)
+        self._mp_server.listen(self._address.port, self._address.host)
 
     def close(self):
         self._mp_server.stop()
