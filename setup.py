@@ -14,7 +14,7 @@ setup(name='msgpack-rpc-python',
       version=__version__,
       author='Masahiro Nakagawa',
       author_email='repeatedly@gmail.com',
-      url="https://github.com/msgpack/msgpack-rpc-python",
+      url="https://github.com/msgpack-rpc/msgpack-rpc-python",
       description="MessagePack RPC",
       long_description="""\
 MessagePack RPC for Python.
