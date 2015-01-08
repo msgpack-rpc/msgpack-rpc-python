@@ -9,16 +9,16 @@ MessagePack RPC implementation based on Tornado.
 ## Installation
 
 ```sh
-% python setup.py install
+% pip install msgpack-rpc-python
 ```
 
 or
 
 ```sh
-% easy_install msgpack-rpc-python
+% python setup.py install
 ```
 
-### Dependent modules
+### Module dependency
 
 * msgpack-python (>= 0.3)
 * tornado (>= 3)
@@ -53,13 +53,13 @@ result = client.call('sum', 1, 2)  # = > 3
 In test directory:
 
 ```sh
-% PYTHONPATH=../ python test_msgpackrpc.py
+% PYTHONPATH=../ python test/test_msgpackrpc.py
 ```
 
 Run with timeout test(Timeout test takes about 5 seconds)
 
 ```sh
-% PYTHONPATH=../ python test_msgpackrpc.py --timeout-test
+% PYTHONPATH=../ python test/test_msgpackrpc.py --timeout-test
 ```
 
 ## Performance
