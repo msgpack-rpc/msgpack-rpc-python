@@ -4,7 +4,7 @@ from msgpackrpc.transport import tcp
 
 class Client(session.Session):
     """\
-    Client is usaful for MessagePack RPC API.
+    Client is useful for MessagePack RPC API.
     """
 
     def __init__(self, address, timeout=10, loop=None, builder=tcp, reconnect_limit=5, pack_encoding='utf-8', unpack_encoding=None):
