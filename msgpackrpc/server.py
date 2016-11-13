@@ -43,10 +43,13 @@ class Server(session.Session):
     def dispatch(self, method, param, responder):
         try:
             method = force_str(method)
-            if not hasattr(self._dispatcher, method):
-                raise error.NoMethodError("'{0}' method not found".format(method))
+            if callable(self._dispatcher):
+                result = self._dispatcher(method, param)
+            else:
+                if not hasattr(self._dispatcher, method):
+                    raise error.NoMethodError("'{0}' method not found".format(method))
+                result = getattr(self._dispatcher, method)(*param)
 
-            result = getattr(self._dispatcher, method)(*param)
             if isinstance(result, AsyncResult):
                 result.set_responder(responder)
             else:
