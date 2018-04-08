@@ -5,3 +5,4 @@ from msgpackrpc.loop import Loop
 from msgpackrpc.client import Client
 from msgpackrpc.server import Server
 from msgpackrpc.address import Address
+from msgpackrpc.udsaddress import UDSAddress
