@@ -1,4 +1,6 @@
 from tornado import ioloop
+import signal
+from time import time
 
 class Loop(object):
     """\
@@ -19,6 +21,10 @@ class Loop(object):
         Starts the Tornado's ioloop if it's not running.
         """
 
+        handler = _LoopShutdownHandler(self._ioloop)
+        signal.signal(signal.SIGINT, handler)
+        signal.signal(signal.SIGTERM, handler)
+        signal.signal(signal.SIGHUP, handler)
         self._ioloop.start()
 
     def stop(self):
@@ -42,3 +48,20 @@ class Loop(object):
         if self._periodic_callback is not None:
             self._periodic_callback.stop()
         self._periodic_callback = None
+
+
+class _LoopShutdownHandler:
+    def __init__(self, loop):
+        self._ioloop = loop
+
+    def __call__(self, *args, **argv):
+        loop = self._ioloop
+        deadline = time() + 3
+
+        def stop():
+            now = time()
+            if now < deadline and (loop._callbacks or loop._timeouts):
+                loop.add_timeout(now + 1, stop)
+            else:
+                loop.stop()
+        stop()
