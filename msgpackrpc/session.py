@@ -3,7 +3,7 @@ from msgpackrpc import message
 from msgpackrpc.future import Future
 from msgpackrpc.transport import tcp
 from msgpackrpc.compat import iteritems
-from msgpackrpc.error import TimeoutError
+from msgpackrpc.error import TimeoutError, SessionError
 
 
 class Session(object):
@@ -32,6 +32,7 @@ class Session(object):
         self._transport = builder.ClientTransport(self, self._address, reconnect_limit, encodings=(pack_encoding, unpack_encoding))
         self._generator = _NoSyncIDGenerator()
         self._request_table = {}
+        self._closing = False
 
     @property
     def address(self):
@@ -45,6 +46,9 @@ class Session(object):
 
     def send_request(self, method, args):
         # need lock?
+        if self._closing:
+            raise SessionError('Session closed')
+
         msgid = next(self._generator)
         future = Future(self._loop, self._timeout)
         self._request_table[msgid] = future
@@ -58,6 +62,7 @@ class Session(object):
         self._loop.start()
 
     def close(self):
+        self._closing = True
         if self._transport:
             self._transport.close()
         self._transport = None
@@ -68,6 +73,7 @@ class Session(object):
         The callback called when the connection failed.
         Called by the transport layer.
         """
+        self._closing = True
         # set error for all requests
         for msgid, future in iteritems(self._request_table):
             future.set_error(reason)

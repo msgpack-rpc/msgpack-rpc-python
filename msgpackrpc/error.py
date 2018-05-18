@@ -23,6 +23,10 @@ class TransportError(RPCError):
     CODE = ".TransportError"
     pass
 
+class SessionError(RPCError):
+    CODE = ".SessionError"
+    pass
+
 class CallError(RPCError):
     CODE = ".NoMethodError"
     pass
