@@ -87,7 +87,7 @@ class TestMessagePackRPC(unittest.TestCase):
         lock.acquire()
         lock.acquire()   # wait for the server to start
 
-        self._client = msgpackrpc.Client(self._address, unpack_encoding='utf-8')
+        self._client = msgpackrpc.Client(self._address)
         return self._client;
 
     def tearDown(self):
@@ -169,7 +169,7 @@ class TestMessagePackRPC(unittest.TestCase):
     def test_connect_failed(self):
         client = self.setup_env();
         port = helper.unused_port()
-        client = msgpackrpc.Client(msgpackrpc.Address('localhost', port), unpack_encoding='utf-8')
+        client = msgpackrpc.Client(msgpackrpc.Address('localhost', port))
         self.assertRaises(error.TransportError, lambda: client.call('hello'))
 
     def test_timeout(self):
@@ -178,7 +178,7 @@ class TestMessagePackRPC(unittest.TestCase):
         if self.__class__.ENABLE_TIMEOUT_TEST:
             self.assertEqual(client.call('long_exec'), 'finish!', "'long_exec' result is incorrect")
 
-            client = msgpackrpc.Client(self._address, timeout=1, unpack_encoding='utf-8')
+            client = msgpackrpc.Client(self._address, timeout=1)
             self.assertRaises(error.TimeoutError, lambda: client.call('long_exec'))
         else:
             print("Skip test_timeout")

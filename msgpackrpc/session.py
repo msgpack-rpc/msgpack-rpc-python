@@ -19,7 +19,7 @@ class Session(object):
     result to the corresponding future.
     """
 
-    def __init__(self, address, timeout, loop=None, builder=tcp, reconnect_limit=5, pack_encoding='utf-8', unpack_encoding=None):
+    def __init__(self, address, timeout, loop=None, builder=tcp, reconnect_limit=5):
         """\
         :param address: address of the server.
         :param loop:    context object.
@@ -29,7 +29,7 @@ class Session(object):
         self._loop = loop or Loop()
         self._address = address
         self._timeout = timeout
-        self._transport = builder.ClientTransport(self, self._address, reconnect_limit, encodings=(pack_encoding, unpack_encoding))
+        self._transport = builder.ClientTransport(self, self._address, reconnect_limit)
         self._generator = _NoSyncIDGenerator()
         self._request_table = {}
 
