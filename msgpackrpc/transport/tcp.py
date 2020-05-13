@@ -7,10 +7,10 @@ from msgpackrpc.error import RPCError, TransportError
 
 
 class BaseSocket(object):
-    def __init__(self, stream, encodings):
+    def __init__(self, stream):
         self._stream = stream
-        self._packer = msgpack.Packer(encoding=encodings[0], default=lambda x: x.to_msgpack())
-        self._unpacker = msgpack.Unpacker(encoding=encodings[1])
+        self._packer = msgpack.Packer(default=lambda x: x.to_msgpack())
+        self._unpacker = msgpack.Unpacker()
 
     def close(self):
         self._stream.close()
@@ -49,8 +49,8 @@ class BaseSocket(object):
 
 
 class ClientSocket(BaseSocket):
-    def __init__(self, stream, transport, encodings):
-        BaseSocket.__init__(self, stream, encodings)
+    def __init__(self, stream, transport):
+        BaseSocket.__init__(self, stream)
         self._transport = transport
         self._stream.set_close_callback(self.on_close)
 
@@ -72,10 +72,9 @@ class ClientSocket(BaseSocket):
 
 
 class ClientTransport(object):
-    def __init__(self, session, address, reconnect_limit, encodings=('utf-8', None)):
+    def __init__(self, session, address, reconnect_limit):
         self._session = session
         self._address = address
-        self._encodings = encodings
         self._reconnect_limit = reconnect_limit;
 
         self._connecting = 0
@@ -95,7 +94,7 @@ class ClientTransport(object):
 
     def connect(self):
         stream = IOStream(self._address.socket(), io_loop=self._session._loop._ioloop)
-        socket = ClientSocket(stream, self, self._encodings)
+        socket = ClientSocket(stream, self)
         socket.connect();
 
     def close(self):
@@ -135,8 +134,8 @@ class ClientTransport(object):
 
 
 class ServerSocket(BaseSocket):
-    def __init__(self, stream, transport, encodings):
-        BaseSocket.__init__(self, stream, encodings)
+    def __init__(self, stream, transport):
+        BaseSocket.__init__(self, stream)
         self._transport = transport
         self._stream.read_until_close(self.on_read, self.on_read)
 
@@ -151,23 +150,21 @@ class ServerSocket(BaseSocket):
 
 
 class MessagePackServer(tcpserver.TCPServer):
-    def __init__(self, transport, io_loop=None, encodings=None):
+    def __init__(self, transport, io_loop=None):
         self._transport = transport
-        self._encodings = encodings
         tcpserver.TCPServer.__init__(self, io_loop=io_loop)
 
     def handle_stream(self, stream, address):
-        ServerSocket(stream, self._transport, self._encodings)
+        ServerSocket(stream, self._transport)
 
 
 class ServerTransport(object):
-    def __init__(self, address, encodings=('utf-8', None)):
+    def __init__(self, address):
         self._address = address;
-        self._encodings = encodings
 
     def listen(self, server):
         self._server = server;
-        self._mp_server = MessagePackServer(self, io_loop=self._server._loop._ioloop, encodings=self._encodings)
+        self._mp_server = MessagePackServer(self, io_loop=self._server._loop._ioloop)
         self._mp_server.listen(self._address.port)
 
     def close(self):

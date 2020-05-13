@@ -20,7 +20,7 @@ def teardown():
 
 def test_client():
     global ADDR
-    client = msgpackrpc.Client(ADDR, unpack_encoding = 'utf-8')
+    client = msgpackrpc.Client(ADDR)
 
     f1 = client.call('echo', 'foo')
     f2 = client.call('echo', 'bar')
@@ -30,7 +30,7 @@ def test_client():
     assert f1 == 'foo'
     assert f3 == 'baz'
 
-    print "EchoHandler#echo via msgpackrpc"
+    print("EchoHandler#echo via msgpackrpc")
 
 
 if __name__ == '__main__':

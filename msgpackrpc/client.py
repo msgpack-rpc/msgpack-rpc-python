@@ -7,9 +7,9 @@ class Client(session.Session):
     Client is useful for MessagePack RPC API.
     """
 
-    def __init__(self, address, timeout=10, loop=None, builder=tcp, reconnect_limit=5, pack_encoding='utf-8', unpack_encoding=None):
+    def __init__(self, address, timeout=10, loop=None, builder=tcp, reconnect_limit=5):
         loop = loop or Loop()
-        session.Session.__init__(self, address, timeout, loop, builder, reconnect_limit, pack_encoding, unpack_encoding)
+        session.Session.__init__(self, address, timeout, loop, builder, reconnect_limit)
 
         if timeout:
             loop.attach_periodic_callback(self.step_timeout, 1000) # each 1s

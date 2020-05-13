@@ -12,15 +12,14 @@ class Server(session.Session):
     Server is usaful for MessagePack RPC Server.
     """
 
-    def __init__(self, dispatcher, loop=None, builder=tcp, pack_encoding='utf-8', unpack_encoding=None):
+    def __init__(self, dispatcher, loop=None, builder=tcp):
         self._loop = loop or Loop()
         self._builder = builder
-        self._encodings = (pack_encoding, unpack_encoding)
         self._listeners = []
         self._dispatcher = dispatcher
 
     def listen(self, address):
-        listener = self._builder.ServerTransport(address, self._encodings)
+        listener = self._builder.ServerTransport(address)
         listener.listen(self)
         self._listeners.append(listener)
 
