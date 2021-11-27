@@ -12,7 +12,7 @@ class Session(object):
     transport layer.
 
     self._request_table(request table) stores the relationship between messageid and
-    corresponding future. When the new requets are sent, the Session generates
+    corresponding future. When the new request are sent, the Session generates
     new message id and new future. Then the Session registers them to request table.
 
     When it receives the message, the Session lookups the request table and set the

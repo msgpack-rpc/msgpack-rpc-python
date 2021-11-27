@@ -9,7 +9,7 @@ from msgpackrpc.transport import tcp
 
 class Server(session.Session):
     """\
-    Server is usaful for MessagePack RPC Server.
+    Server is useful for MessagePack RPC Server.
     """
 
     def __init__(self, dispatcher, loop=None, builder=tcp, pack_encoding='utf-8', unpack_encoding=None):
